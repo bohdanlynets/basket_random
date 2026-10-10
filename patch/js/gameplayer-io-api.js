@@ -14,8 +14,8 @@ GameAPI= {
     "getLink": function(args) {
       return {
         "action": function() {
-          consolel0g("--fx--GameAPI--Branding--getLink--action--");
-          window.open("https://ads.games235.com/"+ (args?"?q="+args:""));
+          consolel0g("--fx--GameAPI--Branding--getLink--action-- (redirects disabled)");
+          // External redirects disabled
         }
       }      
     },
@@ -23,8 +23,8 @@ GameAPI= {
       return {
         "image": "patch/images/null.png",
         "action": function() {
-          consolel0g("--fx--GameAPI--Branding--getLogo--action--");
-          window.open("https://ads.games235.com/");
+          consolel0g("--fx--GameAPI--Branding--getLogo--action-- (redirects disabled)");
+          // External redirects disabled
         }
       }
     }

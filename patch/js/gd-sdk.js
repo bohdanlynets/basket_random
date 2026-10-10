@@ -1,59 +1,14 @@
 /**
-{
-  "name": "SDK_GDPR_TRACKING",
-  "message": "Not set",
-  "status": "warning"
-}
-
-{
-    "name": "SDK_GDPR_TARGETING",
-    "message": "Not set",
-    "status": "warning"
-}
-
-{
-    "name": "SDK_GDPR_THIRD_PARTY",
-    "message": "Not set",
-    "status": "warning"
-}
-
-{
-    "name": "SDK_READY",
-    "message": "Everything is ready.",
-    "status": "success"
-}
-
-{
-    "name": "SDK_ERROR",
-    "message": "Blocked:1: patch/js/null.js?https://www.google-analytics.com/analytics.js",
-    "status": "error"
-}
-
+{"name": "SDK_GDPR_TRACKING", "message": "Not set", "status": "warning"},
+{"name": "SDK_GDPR_TARGETING", "message": "Not set", "status": "warning"},
+{"name": "SDK_GDPR_THIRD_PARTY", "message": "Not set", "status": "warning"},
+{"name": "SDK_READY", "message": "Everything is ready.", "status": "success"},
+{"name": "SDK_ERROR", "message": "Blocked:1: patch/js/null.js?https://www.google-analytics.com/analytics.js", "status": "error"}
 */
 
 gdsdk= function() {
   // ***** UTILS *****
-  function loadJS(FILE_URL, callback) {
-    let scriptEle = document.createElement("script");
-  
-    scriptEle.setAttribute("src", FILE_URL);
-    scriptEle.setAttribute("type", "text/javascript");
-    scriptEle.setAttribute("async", true);
-  
-    document.body.appendChild(scriptEle);
-    
-    // Success
-    scriptEle.addEventListener("load", () => {
-      console.log("--fx--gdsdk--loadJS Done--");
-      callback(true);
-    });
-    
-     // Error
-    scriptEle.addEventListener("error", () => {
-      console.log("--fx--gdsdk--loadJS Error--");
-      callback(false);
-    });
-  }
+  // Ad loading disabled - no external ad scripts loaded
 
   // ***** INIT *****
   this.getSession= function() {
@@ -95,61 +50,24 @@ gdsdk= function() {
   
   this.showAd= function (adType) {
     console.log("--gdsdk--showAd--", adType, arguments);
-    if (adType== "rewarded") {
-      return new Promise((resolve, reject)=> {
-        loadJS("https://www.ubg235.com/ads/rewarded.js", (success)=> {
-        if (success) {
-            console.log("--fx--showAd--Done--");
-            window.GD_OPTIONS.onEvent({
-              name: "SDK_REWARDED_WATCH_COMPLETE",
-              message: "Rewarded",
-              status: "success",
-            });
-            window.GD_OPTIONS.onEvent({
-              name: "SDK_GAME_START",
-              message: "No Message",
-            });
-            resolve(true);
-          } else {
-            console.log("--fx--showAd--Rejected--");
-            window.GD_OPTIONS.onEvent({
-              name: "SDK_GAME_START",
-              message: "Reward Skip!",
-              status: "success",
-            });
-            reject(false);
-          }
-        });
+    // Ad display disabled - external ad scripts not loaded
+    return new Promise((resolve, reject)=> {
+      window.GD_OPTIONS.onEvent({
+        name: "SDK_GAME_START",
+        message: "No Message",
       });
-    } else {
-      return new Promise((resolve, reject)=> {
-        loadJS("https://www.ubg235.com/ads/commercial.js", (success)=> {
-          window.GD_OPTIONS.onEvent({
-            name: "SDK_GAME_START",
-            message: "No Message",
-          });
-          resolve(true);
-        });
-      });
-    }
+      resolve(true);
+    });
   };
 
   this.showBanner= function() {
     console.log("--gdsdk--showBanner--", arguments);
     return new Promise((resolve, reject)=> {
-      loadJS("https://www.ubg235.com/ads/commercial.js", (success)=> {
-        window.GD_OPTIONS.onEvent({
-          name: "SDK_GAME_START",
-          message: "Reward Skip!",
-        });
-        if (success) {
-            console.log("--fx--showBanner--Done--");            
-            resolve(true);
-          } else {
-            console.log("--fx--showBanner--Rejected--");            
-            reject(false);
-          }
+      window.GD_OPTIONS.onEvent({
+        name: "SDK_GAME_START",
+        message: "Reward Skip!",
       });
+      resolve(true);
     });
   };
 
@@ -208,21 +126,18 @@ xlocation= new Proxy(location, {
 
 xwindow = new Proxy(window, {
   get: function(target, property, receiver) {
-    // console.log("--fx--xWindow--property--", property, receiver);    
     if (typeof target[property] == "function") {
       return (...args) => target[property].apply(target,args);
     } else {
       if (property== "location") {
         return target["xlocation"];        
       }
-      // console.log("--fx--xwindow--targetObj--", targetObj);
       return target[property];
     }
   }
 });
 
 op3n= function() {
-  console.trace("--fx--op3n--", arguments);
-  window.open("https://ads.games235.com/");
-  // alert("--fx--xopen--");
+  console.trace("--fx--op3n-- (redirects disabled)", arguments);
+  // External redirects disabled
 }
