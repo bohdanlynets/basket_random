@@ -1,0 +1,29 @@
+<script>
+(function() {
+  const blockedPatterns = [/ubg005\.gitlab\.io/i, /ubg235\.com/i, /games235\.com/i, /ads\.games235\.com/i, /gitlab\.io/i];
+  const isBlockedUrl = (value) => typeof value === "string" && blockedPatterns.some((pattern) => pattern.test(value));
+
+  const originalOpen = window.open.bind(window);
+  window.open = function(url, name, specs) {
+    if (isBlockedUrl(String(url || ""))) {
+      console.warn("Blocked external redirect:", url);
+      return null;
+    }
+    return originalOpen(url, name, specs);
+  };
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (!(node instanceof Element)) return;
+        if (node.tagName === "SCRIPT" && node.src && isBlockedUrl(node.src)) {
+          console.warn("Removed blocked script:", node.src);
+          node.remove();
+        }
+      });
+    });
+  });
+
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
